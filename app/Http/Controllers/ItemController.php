@@ -39,20 +39,24 @@ class ItemController extends Controller
         $newItem = new Item;
         $newItem->name = $request->item['name'];
         $newItem->category = $request->item['category'];
-        $check = $newItem->category;
-        $completed_task = Item::select('completed')->where('category', $check)->latest('updated_at')->first();
-
-        if($completed_task){
-
-            if ($completed_task->completed == 1) {
-                $newItem->save();
-
-                return $newItem;
-
-            }else{
-                return "Complete your previous task in this category";
-            }
+        $inserted = $newItem->save();
+        if($inserted){
+         return $newItem;
         }
+        // $check = $newItem->category;
+        // $completed_task = Item::select('completed')->where('category', $check)->latest('updated_at')->first();
+
+        // if($completed_task){
+
+        //     if ($completed_task->completed == 1) {
+        //         $newItem->save();
+
+        //         return $newItem;
+
+        //     }else{
+        //         return "Complete your previous task in this category";
+        //     }
+        // }
         // if ($completed_task) {
         //     # code...
         // }
@@ -95,16 +99,63 @@ class ItemController extends Controller
     public function update(Request $request, $id)
     {
         $existingItem = Item::find($id);
-
         if($existingItem){
+        // return $existingItem;
+         $check = $existingItem->category;
+         //start here
+            $exists= Item::select('*')->where('category', $check)->get();
+
+            if(count($exists)<2) {
+
+                    $existingItem->completed = $request->item['completed'] ? true : false;
+                    $existingItem->updated_at = Carbon::now() ;
+                    $existingItem->save();
+                    return $existingItem;
+            }
+
+
+            else{
+
+        $completed_task = Item::select('*')->where('category', $check)->latest('updated_at')->limit(2)->get();
+        // return $completed_task;
+        $complete_check= $completed_task['1']->completed;
+        $complete_checkid= $completed_task['1']->id;
+
+                if ($complete_checkid==$existingItem->id) {
+
+                    $existingItem->completed = $request->item['completed'] ? true : false;
+                    $existingItem->updated_at = Carbon::now() ;
+                    $existingItem->save();
+                    return $existingItem;
+
+                }
+
+         elseif($complete_check==1){
+
+
+        // return $complete_check;
+
            $existingItem->completed = $request->item['completed'] ? true : false;
            $existingItem->updated_at = Carbon::now() ;
            $existingItem->save();
            return $existingItem;
 
+
+
+
+        }else{
+            return "Complete your previous task in this category";
         }
+
+
+
+        }
+            //code here end
+
+    } else {
         return "Item not found";
     }
+}
 
     /**
      * Remove the specified resource from storage.
