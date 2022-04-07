@@ -8,7 +8,7 @@
         />
         <span :class="[item.completed ? 'completed' : '', 'item']">{{
             item.name
-        }}</span>
+        }} <strong> category:- {{item.category}}</strong></span>
         <button class="btn-danger ml-3" @click="removeItem()">X</button>
     </li>
 </template>
