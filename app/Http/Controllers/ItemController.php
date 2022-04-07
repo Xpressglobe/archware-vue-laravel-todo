@@ -38,9 +38,27 @@ class ItemController extends Controller
     {
         $newItem = new Item;
         $newItem->name = $request->item['name'];
-        $newItem->save();
+        $newItem->category = $request->item['category'];
+        $check = $newItem->category;
+        $completed_task = Item::select('completed')->where('category', $check)->latest('updated_at')->first();
 
-        return $newItem;
+        if($completed_task){
+
+            if ($completed_task->completed == 1) {
+                $newItem->save();
+
+                return $newItem;
+
+            }else{
+                return "Complete your previous task in this category";
+            }
+        }
+        // if ($completed_task) {
+        //     # code...
+        // }
+        // $newItem->save();
+
+        // return $newItem;
 
 
     }

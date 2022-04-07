@@ -8,7 +8,7 @@
                 v-on:itemchanged="$emit('reloadlist')"
                 v-for="item in items"
                 :key="item.id"
-                class="m-auto my-1 text-justify text-wrap"
+                class="m-auto my-1 text-justify text-wrap item"
             />
         </ul>
     </div>
@@ -25,4 +25,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.item{
+    background: #e6e6e6;
+    padding:8px;
+    margin-top: 3px;
+}
+</style>
